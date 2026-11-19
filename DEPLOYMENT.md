@@ -19,12 +19,12 @@ Use Render with the included [render.yaml](/Users/vanshika/Downloads/google2/sca
 ### Node service
 
 - `APIFY_TOKEN`
-- `OPENROUTER_API_KEY`
 - `PYTHON_API_URL`
 
 ### Python service
 
-- `OPENROUTER_API_KEY`
+- `GEMINI_API_KEY`
+- `GEMINI_MODEL` (optional, defaults to `gemini-3.1-flash-lite`)
 
 ## Render deploy flow
 

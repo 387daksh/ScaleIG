@@ -5,8 +5,10 @@ import requests
 
 load_dotenv()
 
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite")
+# Gemini's OpenAI-compatible endpoint, so the request/response shape stays the same.
+GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
 
 # ===== LEGACY: Analytics Prompt =====
 SYSTEM_PROMPT = """
@@ -75,18 +77,18 @@ def build_prompt(grouped: dict) -> str:
     )
 
 def generate_insight(prompt_json: str) -> str:
-    """Legacy: Generate insight from grouped data using OpenRouter."""
+    """Legacy: Generate insight from grouped data using Gemini."""
     
-    if not OPENROUTER_API_KEY:
-        return "ERROR: OPENROUTER_API_KEY not set in .env file"
+    if not GEMINI_API_KEY:
+        return "ERROR: GEMINI_API_KEY not set in .env file"
     
     headers = {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Authorization": f"Bearer {GEMINI_API_KEY}",
         "Content-Type": "application/json"
     }
     
     payload = {
-        "model": "openrouter/auto",  # or specify: "meta-llama/llama-2-70b-chat"
+        "model": GEMINI_MODEL,
         "messages": [
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": f"DATA:\n{prompt_json}"}
@@ -95,17 +97,17 @@ def generate_insight(prompt_json: str) -> str:
         "max_tokens": 400
     }
     
-    response = requests.post(OPENROUTER_URL, json=payload, headers=headers)
+    response = requests.post(GEMINI_URL, json=payload, headers=headers)
     
     if response.status_code != 200:
-        return f"ERROR: OpenRouter API error {response.status_code}: {response.text}"
+        return f"ERROR: Gemini API error {response.status_code}: {response.text}"
     
     return response.json()["choices"][0]["message"]["content"].strip()
 
 
 def generate_growth_content(agent_output: dict) -> str:
     """
-    NEW: Generate growth-optimized content using strategy via OpenRouter.
+    NEW: Generate growth-optimized content using strategy via Gemini.
     
     Args:
         agent_output: Dict from strategy_agent.build_agent_output()
@@ -114,8 +116,8 @@ def generate_growth_content(agent_output: dict) -> str:
         Structured content ideas + captions + CTA
     """
     
-    if not OPENROUTER_API_KEY:
-        return "ERROR: OPENROUTER_API_KEY not set in .env file"
+    if not GEMINI_API_KEY:
+        return "ERROR: GEMINI_API_KEY not set in .env file"
     
     strategy = agent_output["strategy"]
     top_queries = agent_output["top_audience_questions"]
@@ -138,12 +140,12 @@ Hooks to use: {', '.join(strategy['hooks'])}
     )
     
     headers = {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Authorization": f"Bearer {GEMINI_API_KEY}",
         "Content-Type": "application/json"
     }
     
     payload = {
-        "model": "openrouter/auto",  # or specify: "meta-llama/llama-2-70b-chat"
+        "model": GEMINI_MODEL,
         "messages": [
             {"role": "system", "content": "You are a social media growth strategist."},
             {"role": "user", "content": prompt}
@@ -152,9 +154,9 @@ Hooks to use: {', '.join(strategy['hooks'])}
         "max_tokens": 800
     }
     
-    response = requests.post(OPENROUTER_URL, json=payload, headers=headers)
+    response = requests.post(GEMINI_URL, json=payload, headers=headers)
     
     if response.status_code != 200:
-        return f"ERROR: OpenRouter API error {response.status_code}: {response.text}"
+        return f"ERROR: Gemini API error {response.status_code}: {response.text}"
 
     return response.json()["choices"][0]["message"]["content"].strip()

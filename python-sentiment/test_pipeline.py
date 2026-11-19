@@ -116,8 +116,8 @@ def run_pipeline():
     if "ERROR" in content_ideas:
         print(f"  ❌ {content_ideas}")
         print("\n⚠️  SETUP REQUIRED:")
-        print("  1. Get API key from: https://openrouter.ai/keys")
-        print("  2. Add to .env file: OPENROUTER_API_KEY=your_key")
+        print("  1. Get API key from: https://aistudio.google.com/apikey")
+        print("  2. Add to .env file: GEMINI_API_KEY=your_key")
         print("  3. Run this script again")
     else:
         print("  ✓ Content generated successfully!")

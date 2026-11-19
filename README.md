@@ -50,7 +50,7 @@ Tailwind CSS – Utility-first styling with custom theming
 JavaScript – Frontend logic and interactivity
 AI & Intelligence
 Google Gemini – Content analysis, sentiment detection, and AI-powered suggestions
-OpenRouter.ai – Flexible LLM access and model routing
+Gemini API (OpenAI-compatible endpoint) – LLM content generation
 Database
 Firebase – Real-time storage and rapid prototyping
 APIs & Data Sources
